@@ -32,6 +32,7 @@ public class MyProject implements Project {
 	
 	public MyProject() {
         vert = 0;
+        adjacencyL = new ArrayList<>();
 	}
     /**
      * Determine if all of the devices in the network are connected to the network.
@@ -52,10 +53,12 @@ public class MyProject implements Project {
     public boolean allDevicesConnected(int[][] adjlist) {
         // create new boolean array 
     	seen = new Boolean[adjlist.length];
+    	// mark all values of seen as false (true as defualt)
+        for(int i = 0; i < adjlist.length; i++){seen[i] = false;}
     	// begin DFS until complete 
-        dfsADC(vert, seen, adjlist);
+        dfsADC(0, seen, adjlist);
         // return the overall parity for the Boolean array
-        return Arrays.asList(seen).contains(false);
+        return !Arrays.asList(seen).contains(false);
     }
     
     /**
@@ -66,6 +69,7 @@ public class MyProject implements Project {
      * @param v The vertex give in this instance of DFS recursion.
      * @param seen The Boolean array to determine if a vertex has been visted or  not. 
      * @param list The adjlist itself used to transverse the network.
+     * 
      */
     
     private void dfsADC(int v, Boolean[] seen, int[][] list) {
