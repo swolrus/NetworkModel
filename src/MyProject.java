@@ -25,17 +25,48 @@ public class MyProject implements Project {
     // an array to store is a vertice has been visted by traversal
     public Boolean seen[];
     
+    /**
+     * Zero argument constructor used to create an instance of MyProject for marking. 
+     */
 
 	
 	public MyProject() {
         vert = 0;
 	}
-	
+    /**
+     * Determine if all of the devices in the network are connected to the network.
+     * Devices are considered to be connected to the network if they can transmit (including via other devices) to every other device in the network.
+     *
+     * Create a boolean arrray of "seen" and DFS once from any node in the adjlist until completion. Once complete check the overall parity of the seen array and if true 
+     * all nodes where visted and must be connected. 
+     *
+     * Marks (6 total):
+     * - Correctness: +3 marks
+     * - Complexity:
+     *   - O(N): +1 mark
+     * - Quality: +2 marks
+     * 
+     * @param adjlist The adjacency list describing the links between devices
+     * @return Whether all the devices are connected or not
+     */
     public boolean allDevicesConnected(int[][] adjlist) {
-        seen = new Boolean[adjlist.length];
+        // create new boolean array 
+    	seen = new Boolean[adjlist.length];
+    	// begin DFS until complete 
         dfsADC(vert, seen, adjlist);
+        // return the overall parity for the Boolean array
         return Arrays.asList(seen).contains(false);
     }
+    
+    /**
+     * 
+     * From any random node take all possible routes to any other node if not visted through recursion. All available nodes are determined in the array 
+     * as the parent array, all childs of these parents are the other nodes that are connected to that parent. 
+     * 
+     * @param v The vertex give in this instance of DFS recursion.
+     * @param seen The Boolean array to determine if a vertex has been visted or  not. 
+     * @param list The adjlist itself used to transverse the network.
+     */
     
     private void dfsADC(int v, Boolean[] seen, int[][] list) {
         // Mark the current node as visited
