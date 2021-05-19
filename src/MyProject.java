@@ -42,7 +42,7 @@ public class MyProject implements Project {
         seen[v] = true;
         for(int y = 0; y < list[v].length; y++){   
             int n = list[v][y];
-            if (seen[n]){
+            if (!seen[n]){
                 dfsADC(n, seen, list);}
         }
     }
