@@ -33,7 +33,7 @@ public class MyProject implements Project {
 	
     public boolean allDevicesConnected(int[][] adjlist) {
         seen = new Boolean[adjlist.length];
-        dfsADC(0, seen, adjlist);
+        dfsADC(vert, seen, adjlist);
         return Arrays.asList(seen).contains(false);
     }
     
