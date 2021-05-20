@@ -231,14 +231,6 @@ public class MyProject implements Project {
         return shortestPaths;
     }
     
-    private void getVertices(short[][] addrs, short[] subnetDest) {
-    	
-    	for(int i = 0; i < addrs.length; i++) {
-    		
-    	}
-    	
-    }
-    
     /**
      * 
      * BFS closestInSubnet
