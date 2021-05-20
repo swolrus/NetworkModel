@@ -28,8 +28,7 @@ public class MyProject implements Project {
     /**
      * Zero argument constructor used to create an instance of MyProject for marking. 
      */
-
-	
+    
 	public MyProject() {
         vert = 0;
         adjacencyL = new ArrayList<>();
@@ -50,6 +49,7 @@ public class MyProject implements Project {
      * @param adjlist The adjacency list describing the links between devices
      * @return Whether all the devices are connected or not
      */
+	
     public boolean allDevicesConnected(int[][] adjlist) {
         // create new boolean array 
     	seen = new Boolean[adjlist.length];
@@ -62,6 +62,8 @@ public class MyProject implements Project {
     }
     
     /**
+     * 
+     * DFS allDevicesConnected
      * 
      * From any random node take all possible routes to any other node if not visted through recursion. All available nodes are determined in the array 
      * as the parent array, all childs of these parents are the other nodes that are connected to that parent. 
@@ -82,11 +84,52 @@ public class MyProject implements Project {
         }
     }
 
+    /**
+     * Determine the number of different paths a packet can take in the network to get from a transmitting device to a receiving device.
+     * A device will only transmit a packet to a device that is closer to the destination, where the distance to the destination is the minimum number of hops between a device and the destination.
+     *
+     * Marks (10 total):
+     * - Correctness: +4 marks
+     * - Complexity:
+     *   - O(N^2): +1 mark
+     *   - O(N): +2 marks
+     * - Quality: +3 marks
+     * 
+     * @param adjlist The adjacency list describing the links between devices
+     * @param src The source (transmitting) device
+     * @param dst The destination (receiving) device
+     * @return The total number of possible paths between the two devices
+     */
+    
     public int numPaths(int[][] adjlist, int src, int dst) {
         // TODO
         return 0;
     }
 
+    /**
+     * Compute the minimum number of hops required to reach a device in each subnet query.
+     * Each device has an associated IP address.
+     * An IP address is here represented as an array of exactly four integers between 0 and 255 inclusive (for example, {192, 168, 1, 1}).
+     * Each query specifies a subnet address.
+     * A subnet address is specified as an array of up to four integers between 0 and 255.
+     * An IP address is considered to be in a subnet if the subnet address is a prefix of the IP address (for example, {192, 168, 1, 1} is in subnet {192, 168} but not in {192, 168, 2}).
+     * For each query, compute the minimum number of hops required to reach some device in the specified subnet.
+     * If no device in that subnet is reachable, return Integer.MAX_VALUE.
+     *
+     * Marks (10 total):
+     * - Correctness: +4 marks
+     * - Complexity: (where Q is the number of queries)
+     *   - O((N + Q) lg N): +2 marks
+     *   - O(N + Q): +1 mark
+     * - Quality: +3 marks
+     * 
+     * @param adjlist The adjacency list describing the links between devices
+     * @param addrs The list of IP addresses for each device
+     * @param src The source device
+     * @param queries The queries to respond to for each subnet
+     * @return An array with the distance to the closest device for each query, or Integer.MAX_VALUE if none are reachable
+     */
+    
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) {
         // TODO
         return null;
