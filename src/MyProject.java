@@ -3,8 +3,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.BitSet;
 import java.util.Stack;
+
+import PathImp.Vertex;
+
 import java.util.Iterator;
 
 // Full Name (StudentNum)
@@ -80,6 +84,7 @@ public class MyProject implements Project {
         for(int y = 0; y < list[v].length; y++){   
             int n = list[v][y];
             if (!seen[n]){
+            	
                 dfsADC(n, seen, list);}
         }
     }
@@ -102,8 +107,54 @@ public class MyProject implements Project {
      */
     
     public int numPaths(int[][] adjlist, int src, int dst) {
-        // TODO
-        return 0;
+    	
+    	if (src == dst) {return 1;}
+        int paths = 0;
+        
+        // create new boolean array 
+    	seen = new Boolean[adjlist.length];
+    	// mark all values of seen as false (true as defualt)
+        for(int i = 0; i < adjlist.length; i++){seen[i] = false;}
+        
+        Queue<Node> unsettled = new LinkedList<Node>();
+        
+        int distance = 0;
+        Node start = new Node(src, distance);
+        seen[src] = true;
+        
+        unsettled.add(start);
+
+        while (!unsettled.isEmpty()) {
+        	
+        	Node current = unsettled.remove();
+        	
+        	for (int i : adjlist[current.id]) {
+        		if (!seen[i]) {
+        			Node tmp = new Node(i, current.depth + 1);
+        	        seen[i] = true;
+        	        unsettled.add(tmp);
+        		}
+        		if (i == dst) {
+        			paths++;
+        			for (Node n : unsettled) {
+        				if (n.depth > current.depth) {unsettled.remove(n);}
+        			}
+        		}
+        	}
+        	
+        }
+        return paths;
+    }
+    
+    class Node {
+		public int id;
+		public int depth;
+		
+		public Node(int id, int depth) {
+			this.id = id;
+			this.depth = depth;
+		}
+		
     }
 
     /**
