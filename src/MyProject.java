@@ -107,6 +107,8 @@ public class MyProject implements Project {
     
     public int numPaths(int[][] adjlist, int src, int dst) {
     	
+    	if (src == dst) { return 1; }
+    	
         int paths = 0;
         
         Set<Integer> seen = new HashSet<>();
@@ -121,7 +123,6 @@ public class MyProject implements Project {
         while (!unsettled.isEmpty()) {
         	
         	Node current = unsettled.remove();
-        	if (current.id == dst) { paths++; }
 
     		for (int i : adjlist[current.id]) {
         		if (!seen.contains(i)) {
