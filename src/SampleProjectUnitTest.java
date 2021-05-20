@@ -19,6 +19,8 @@ public class SampleProjectUnitTest {
      * Total number of tests passed
      */
     private static int numPass = 0;
+    
+    private static String userdef=" (usrdef)";
 
     /**
      * Helper function to print out a test result nicely and update counters
@@ -164,6 +166,16 @@ public class SampleProjectUnitTest {
 
         testInt(pref + "no path",
             proj.numPaths(adjlist, 0, 3), 0);
+        
+        adjlist = new int[][] {
+            { 1, 2, 3 },
+            { 0, 4 },
+            { 0, 4 },
+            { 1, 2, 3 },
+            { 3, 4 },
+        };
+        testInt(pref + "3 paths and outlier" + userdef,
+            proj.numPaths(adjlist, 0, 4), 3);
     }
 
     public static void closestInSubnetTest() {

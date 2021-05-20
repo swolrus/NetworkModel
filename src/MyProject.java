@@ -1,11 +1,4 @@
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Queue;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.BitSet;
-import java.util.Stack;
+import java.util.*;
 
 import PathImp.Vertex;
 
@@ -108,40 +101,34 @@ public class MyProject implements Project {
     
     public int numPaths(int[][] adjlist, int src, int dst) {
     	
-    	if (src == dst) {return 1;}
         int paths = 0;
         
-        // create new boolean array 
-    	seen = new Boolean[adjlist.length];
-    	// mark all values of seen as false (true as defualt)
-        for(int i = 0; i < adjlist.length; i++){seen[i] = false;}
+        Set<Integer> seen = new HashSet<>();
         
         Queue<Node> unsettled = new LinkedList<Node>();
-        
-        int distance = 0;
-        Node start = new Node(src, distance);
-        seen[src] = true;
+
+        Node start = new Node(src, 0);
+        seen.add(src);
         
         unsettled.add(start);
 
         while (!unsettled.isEmpty()) {
         	
         	Node current = unsettled.remove();
-        	
-        	for (int i : adjlist[current.id]) {
-        		if (!seen[i]) {
-        			Node tmp = new Node(i, current.depth + 1);
-        	        seen[i] = true;
-        	        unsettled.add(tmp);
-        		}
-        		if (i == dst) {
-        			paths++;
-        			for (Node n : unsettled) {
-        				if (n.depth > current.depth) {unsettled.remove(n);}
+        	if (current.id == dst) { paths++; }
+
+    		for (int i : adjlist[current.id]) {
+        		if (!seen.contains(i)) {
+        			if (i == dst) { 
+        				paths++; 
+        			} else {
+	        			Node tmp = new Node(i, current.depth + 1);
+	        	        seen.add(i);
+	        	        unsettled.add(tmp);
         			}
         		}
         	}
-        	
+    		
         }
         return paths;
     }
