@@ -1,13 +1,10 @@
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.Set;
 import java.util.LinkedList;
-import java.util.BitSet;
-import java.util.Stack;
-import java.util.Iterator;
+import java.util.List;
 
 // Full Name (StudentNum)
 
@@ -24,8 +21,20 @@ public class MyProject implements Project {
     public ArrayList<ArrayList<Short>> address;
     // an index that stores the lates vertex added to the list
     public Integer vert;
-    // an array to store is a vertice has been visted by traversal
-    public Boolean seen[];
+    // a hash set to store if a vertice has been visted by traversal
+    Set<Integer> seen = new HashSet<>();
+    
+    Queue<Node> unsettled = new LinkedList<Node>();
+    
+    private class Node {
+		private int id;
+		private int data;
+		
+		public Node(int id, int data) {
+			this.id = id;
+			this.data = data;
+		}
+    }
     
     /**
      * Zero argument constructor used to create an instance of MyProject for marking. 
@@ -54,7 +63,7 @@ public class MyProject implements Project {
     	// check to see if there are entries if not return false.
     	if(adjlist.length == 0) {return false;}
         // create new boolean array .
-    	seen = new Boolean[adjlist.length];
+    	Boolean[] seen = new Boolean[adjlist.length];
     	// mark all values of seen as false (true as defualt).
         for(int i = 0; i < adjlist.length; i++){seen[i] = false;}
     	// begin DFS until complete 
@@ -111,8 +120,6 @@ public class MyProject implements Project {
     	
         int paths = 0;
         
-        Set<Integer> seen = new HashSet<>();
-        
         Queue<Node> unsettled = new LinkedList<Node>();
 
         Node start = new Node(src, 0);
@@ -129,7 +136,7 @@ public class MyProject implements Project {
         			if (i == dst) { 
         				paths++; 
         			} else {
-	        			Node tmp = new Node(i, current.depth + 1);
+	        			Node tmp = new Node(i, current.data + 1);
 	        	        seen.add(i);
 	        	        unsettled.add(tmp);
         			}
@@ -138,17 +145,6 @@ public class MyProject implements Project {
     		
         }
         return paths;
-    }
-    
-    class Node {
-		public int id;
-		public int depth;
-		
-		public Node(int id, int depth) {
-			this.id = id;
-			this.depth = depth;
-		}
-		
     }
 
     /**
@@ -243,26 +239,26 @@ public class MyProject implements Project {
      * 
      */
     
-    private void bfsCIS(int start, int vertices, int[] dist, int[][] adjlist){
+    private void bfsCIS(int src, int vertices, int[] dist, int[][] adjlist){
     	// create a queue of vertices to be scanned as per BFS LinkedList.
-    	LinkedList<Integer> queue = new LinkedList<Integer>();
+    	unsettled = new LinkedList<Node>();
     	// stores information on whether the vertex has been visited or not.
-    	boolean visited[] = new boolean[vertices];
-    	// all vertices set to unvisited and a distance of Integer.MAX_VALUE.
-    	for( int i = 0; i < vertices; i++ ) {visited[i] = false; dist[i] = Integer.MAX_VALUE;}
+    	seen = new HashSet<>();
     	// now source is first to be visited 
     	// distance from source is set to 0.
-    	visited[start] = true;
-    	dist[start] = 0;
-    	queue.add(start);
+    	Node start = new Node(src, 0);
+        seen.add(src);
+        
+    	unsettled.add(start);
     	// BFS Algorithm itself.
-    	while(!queue.isEmpty()){
-    		int u = queue.remove();
-    		for(int i = 0; i < adjlist[u].length; i++) {
-    			if(visited[adjlist[u][i]] == false) {
-    				visited[adjlist[u][i]] = true;
-    				dist[adjlist[u][i]] = dist[u] + 1;
-    				queue.add(adjlist[u][i]);
+    	while(!unsettled.isEmpty()){
+    		Node current = unsettled.remove();
+    		for(int i : adjlist[current.id]) {
+    			if(!seen.contains(i)) {
+    				dist[i] = dist[current.id] + 1;
+    				Node tmp = new Node(i, current.data + 1);
+        	        seen.add(i);
+        	        unsettled.add(tmp);
     			}
     		}
     	}
@@ -270,7 +266,58 @@ public class MyProject implements Project {
     
 
     public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
-        // TODO
-        return 0;
+    	if (src == dst) { return -1; }
+    	
+        List<Integer> pathweights = new ArrayList<Integer>();
+        
+        seen = new HashSet<>();
+        
+        unsettled = new LinkedList<Node>();
+
+        Node start = new Node(src, 0);
+        seen.add(src);
+        
+        unsettled.add(start);
+        
+        while (!unsettled.isEmpty()) {
+        	Node current = unsettled.remove();
+
+    		for (int y=0 ; y<adjlist[current.id].length ; y++) {
+    			int id=adjlist[current.id][y];
+    			
+        		if (!seen.contains(id)) {
+        			if (id == dst) {
+        				// add total download speed
+        				pathweights.add(current.data + speeds[current.id][y]);
+        			} else {
+	        			Node tmp = new Node(id, current.data + speeds[current.id][y]);
+	        	        seen.add(id);
+	        	        unsettled.add(tmp);
+        			}
+        		}
+        	}
+    		
+        }
+        
+        switch (pathweights.size()) {
+        	// no possible connections
+        	case 0:
+        		return 0;
+        		
+        	// one possible connection
+        	case 1:
+        		return (int) pathweights.remove(0);
+        		
+        	// multiple possible connections
+        	default:
+        		double RHS = 0;
+                for (int weight : pathweights) { 
+                	double tmp = weight;
+                	RHS = RHS + (1/tmp); 
+                }
+                RHS = 1/RHS;
+                return (int) RHS;
+        }
+        
     }
 }
