@@ -3,12 +3,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.BitSet;
 import java.util.Stack;
-
-import PathImp.Vertex;
-
 import java.util.Iterator;
 
 // Full Name (StudentNum)
@@ -33,10 +29,8 @@ public class MyProject implements Project {
      * Zero argument constructor used to create an instance of MyProject for marking. 
      */
     
-	public MyProject() {
-        vert = 0;
-        adjacencyL = new ArrayList<>();
-	}
+	public MyProject() {}
+	
     /**
      * Determine if all of the devices in the network are connected to the network.
      * Devices are considered to be connected to the network if they can transmit (including via other devices) to every other device in the network.
@@ -47,7 +41,7 @@ public class MyProject implements Project {
      * Marks (6 total):
      * - Correctness: +3 marks
      * - Complexity:
-     *   - O(N): +1 mark
+     *   - O(N): +1 mark (ACHIEVED)
      * - Quality: +2 marks
      * 
      * @param adjlist The adjacency list describing the links between devices
@@ -55,13 +49,15 @@ public class MyProject implements Project {
      */
 	
     public boolean allDevicesConnected(int[][] adjlist) {
-        // create new boolean array 
+    	// check to see if there are entries if not return false.
+    	if(adjlist.length == 0) {return false;}
+        // create new boolean array .
     	seen = new Boolean[adjlist.length];
-    	// mark all values of seen as false (true as defualt)
+    	// mark all values of seen as false (true as defualt).
         for(int i = 0; i < adjlist.length; i++){seen[i] = false;}
     	// begin DFS until complete 
         dfsADC(0, seen, adjlist);
-        // return the overall parity for the Boolean array
+        // return the overall parity for the Boolean array.
         return !Arrays.asList(seen).contains(false);
     }
     
@@ -72,6 +68,8 @@ public class MyProject implements Project {
      * From any random node take all possible routes to any other node if not visted through recursion. All available nodes are determined in the array 
      * as the parent array, all childs of these parents are the other nodes that are connected to that parent. 
      * 
+     * Complexity - 0(N)
+     * 
      * @param v The vertex give in this instance of DFS recursion.
      * @param seen The Boolean array to determine if a vertex has been visted or  not. 
      * @param list The adjlist itself used to transverse the network.
@@ -79,12 +77,11 @@ public class MyProject implements Project {
      */
     
     private void dfsADC(int v, Boolean[] seen, int[][] list) {
-        // Mark the current node as visited
+        // mark the current node as visited
         seen[v] = true;
         for(int y = 0; y < list[v].length; y++){   
             int n = list[v][y];
             if (!seen[n]){
-            	
                 dfsADC(n, seen, list);}
         }
     }
@@ -182,9 +179,106 @@ public class MyProject implements Project {
      */
     
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) {
-        // TODO
-        return null;
+        int size = adjlist.length;
+    	// stores distnces travelled to get to each vertex.
+        int[] dist = new int[adjlist.length];
+        Arrays.fill(dist, -1);
+        // store the address of the source device for reference later in algorithm. 
+        short[] srcAddrs = addrs[src];
+        // used to store the return values for each querie.
+        int[] shortestPaths = new int[queries.length];
+        // bfs over entire adjlist from source to get distances travelled to each node. 
+        bfsCIS(src, size, dist, adjlist);
+        // for each query find the vertex that has the shortest path in the subnet that is specified 
+        // in the query. 
+        for(int i = 0; i < queries.length; i++) {
+        	short[] subnetDest = queries[i];
+        	if(subnetDest.length == 4) {
+        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1] && subnetDest[2] == srcAddrs[2] && subnetDest[3] == srcAddrs[3]) {
+        			shortestPaths[i] = 0;
+        			}
+        		else;{
+        			
+        		}
+        	}
+        	else if(subnetDest.length == 3) {
+        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1] && subnetDest[2] == srcAddrs[2]) {
+        			shortestPaths[i] = 0;
+        			}
+        		else;{
+        			
+        		}
+        	}
+        	else if(subnetDest.length == 2) {
+        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1]) {
+        			shortestPaths[i] = 0;
+        			}
+        		else;{
+        			
+        		}
+        	}
+        	else if(subnetDest.length == 1) {
+        		if(subnetDest[0] == srcAddrs[0]) {
+        			shortestPaths[i] = 0;
+        			}
+        		else;{
+        			
+        		}
+        	}
+        	
+        }
+        
+        return shortestPaths;
     }
+    
+    private void getVertices(short[][] addrs, short[] subnetDest) {
+    	
+    	for(int i = 0; i < addrs.length; i++) {
+    		
+    	}
+    	
+    }
+    
+    /**
+     * 
+     * BFS closestInSubnet
+     * 
+     * Description of BFS 
+     * 
+     * Complexity - O(V+G)
+     * 
+     * @param start 
+     * @param vertices 
+     * @param dist 
+     * @param adjlist 
+     * 
+     */
+    
+    private void bfsCIS(int start, int vertices, int[] dist, int[][] adjlist){
+    	// create a queue of vertices to be scanned as per BFS LinkedList.
+    	LinkedList<Integer> queue = new LinkedList<Integer>();
+    	// stores information on whether the vertex has been visited or not.
+    	boolean visited[] = new boolean[vertices];
+    	// all vertices set to unvisited and a distance of Integer.MAX_VALUE.
+    	for( int i = 0; i < vertices; i++ ) {visited[i] = false; dist[i] = Integer.MAX_VALUE;}
+    	// now source is first to be visited 
+    	// distance from source is set to 0.
+    	visited[start] = true;
+    	dist[start] = 0;
+    	queue.add(start);
+    	// BFS Algorithm itself.
+    	while(!queue.isEmpty()){
+    		int u = queue.remove();
+    		for(int i = 0; i < adjlist[u].length; i++) {
+    			if(visited[adjlist[u][i]] == false) {
+    				visited[adjlist[u][i]] = true;
+    				dist[adjlist[u][i]] = dist[u] + 1;
+    				queue.add(adjlist[u][i]);
+    			}
+    		}
+    	}
+    }
+    
 
     public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
         // TODO
