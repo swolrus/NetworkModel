@@ -171,7 +171,7 @@ public class SampleProjectUnitTest {
             { 1, 2, 3 },
             { 0, 4 },
             { 0, 4 },
-            { 1, 2, 3 },
+            { 0, 4 },
             { 3, 4 },
         };
         testInt(pref + "3 paths and outlier" + userdef,
