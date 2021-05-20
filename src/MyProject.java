@@ -15,16 +15,16 @@ public class MyProject implements Project {
     // each stored list stores the destination of the edges that leave the vertex
     // represented by the address in adjacencyList
     public ArrayList<ArrayList<Integer>> adjacencyL;
-    // a transpose of the adjcaency list
+    // a transpose of the adjacency list
     public ArrayList<ArrayList<Integer>> transposeAJ;
-    // arraylist to store the URL of each vertex
+    // array list to store the URL of each vertex
     public ArrayList<ArrayList<Short>> address;
-    // an index that stores the lates vertex added to the list
+    // an index that stores the latest vertex added to the list
     public Integer vert;
-    // a hash set to store if a vertice has been visted by traversal
-    Set<Integer> seen = new HashSet<>();
+    // a hash set to store if a vertex has been seen by the traversal
+    Set<Integer> seen;
     
-    Queue<Node> unsettled = new LinkedList<Node>();
+    Queue<Node> unsettled;
     
     private class Node {
 		private int id;
@@ -121,6 +121,9 @@ public class MyProject implements Project {
         int paths = 0;
         
         Queue<Node> unsettled = new LinkedList<Node>();
+        
+        // stores information on whether the vertex has been visited or not.
+    	seen = new HashSet<>();
 
         Node start = new Node(src, 0);
         seen.add(src);
@@ -144,6 +147,11 @@ public class MyProject implements Project {
         	}
     		
         }
+        for (int n : seen) {
+        	System.out.print(n + ":");
+        
+        }
+        System.out.println();
         return paths;
     }
 
@@ -310,14 +318,13 @@ public class MyProject implements Project {
         		
         	// multiple possible connections
         	default:
-        		double RHS = 0;
+        		double calc = 0;
                 for (int weight : pathweights) { 
                 	double tmp = weight;
-                	RHS = RHS + (1/tmp); 
+                	calc = calc + (1/tmp); 
                 }
-                RHS = 1/RHS;
-                return (int) RHS;
+                calc = 1/calc;
+                return (int) calc;
         }
-        
     }
 }
