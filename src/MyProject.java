@@ -194,8 +194,6 @@ public class MyProject implements Project {
 	 */
 
 	public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) {
-		// store the address of the source device for reference later in algorithm. 
-		short[] srcAddrs = addrs[src];
 		// used to store the return values for each query
 		int[] shortestPaths = new int[queries.length];
 		for (int i=1 ; i<shortestPaths.length ; i++) {
@@ -215,14 +213,7 @@ public class MyProject implements Project {
 
 		// add each query as a string
 		for (int i=0 ; i<queries.length ; i++) {
-			if (queries[i] == null) {
-				shortestPaths[i] = 0;
-				i++;
-			}
 			String key = Arrays.toString(queries[i]);
-			/*if (qmap.containsKey(key)) {
-				
-			}*/
 			Query q;
 			if (qmap.containsKey(key)) {
 				q = qmap.get(key);
@@ -244,19 +235,8 @@ public class MyProject implements Project {
 					seen.add(id);
 					unsettled.add(tmp);
 				}
-				for (int i=1 ; i<4 ; i++) {
-					short[] subquery = Arrays.copyOfRange(addrs[current.id], 0, i);
-					String test = Arrays.toString(subquery);
-					if (qmap.containsKey(test)) {
-						List<Integer> dupes = qmap.get(test).data;
-						for (int d : dupes) {
-							shortestPaths[d] = current.data;
-						}
-						qmap.remove(test);
-					}
-				}
 			}
-			
+			testSubnet(addrs, qmap, current, shortestPaths);
 		}
 
 
@@ -265,7 +245,7 @@ public class MyProject implements Project {
 
 	/**
 	 * 
-	 * In sub net
+	 * Test subnet
 	 * 
 	 * Tests IP given as address against all queries in a list
 	 * Divides given IP into 3 possible segments to test against the queries
@@ -279,52 +259,22 @@ public class MyProject implements Project {
 	 * @return int the number of matched queries, or -1 if no matches
 	 * 
 	 */
-	public int inSubnet(short[] address, Set<String> qlist) {
-		int[] success = -1;
-		
-		return success;
-	}
-
-	/**
-	 * 
-	 * BFS closestInSubnet
-	 * 
-	 * Description of BFS 
-	 * 
-	 * Complexity - O(V+G)
-	 * 
-	 * @param start 
-	 * @param vertices 
-	 * @param dist 
-	 * @param adjlist 
-	 * 
-	 */
-
-	private void bfsCIS(int src, int vertices, int[] dist, int[][] adjlist){
-		// create a queue of vertices to be scanned as per BFS LinkedList.
-		unsettled = new LinkedList<Node>();
-		// stores information on whether the vertex has been visited or not.
-		seen = new HashSet<>();
-		// now source is first to be visited 
-		// distance from source is set to 0.
-		Node start = new Node(src, 0);
-		seen.add(src);
-
-		unsettled.add(start);
-		// BFS Algorithm itself.
-		while(!unsettled.isEmpty()){
-			Node current = unsettled.remove();
-			for(int i : adjlist[current.id]) {
-				if(!seen.contains(i)) {
-					dist[i] = dist[current.id] + 1;
-					Node tmp = new Node(i, current.data + 1);
-					seen.add(i);
-					unsettled.add(tmp);
+	public void testSubnet(short[][] addrs, HashMap<String, Query> qmap, Node current, int[] shortestPaths) {
+		for (int i=1 ; i<5 ; i++) {
+			
+			short[] subquery = Arrays.copyOfRange(addrs[current.id], 0, i);
+			
+			String test = Arrays.toString(subquery);
+			if (qmap.containsKey(test)) {
+				
+				List<Integer> dupes = qmap.get(test).data;
+				for (int d : dupes) {
+					shortestPaths[d] = current.data;
 				}
+				qmap.remove(test);
 			}
 		}
 	}
-
 
 	public int maxDownloadSpeed(int[][] adjlist, int[][] speeds, int src, int dst) {
 		if (src == dst) { return -1; }
