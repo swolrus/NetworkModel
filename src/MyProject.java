@@ -2,6 +2,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Queue;
 import java.util.Set;
 import java.util.LinkedList;
@@ -30,13 +31,24 @@ public class MyProject implements Project {
 	private class Node {
 		private int id;
 		private int data;
+		private List<Query> queries;
 
 		public Node(int id, int data) {
+			queries = new LinkedList<Query>();
 			this.id = id;
 			this.data = data;
 		}
 	}
-
+	
+	private class Query {
+		private List<Integer> data;
+		
+		private Query(int id) {
+			data = new LinkedList<Integer>();
+			data.add(id);
+		}
+		
+	}
 	/**
 	 * Zero argument constructor used to create an instance of MyProject for marking. 
 	 */
@@ -144,7 +156,7 @@ public class MyProject implements Project {
 			for (int i : adjlist[current.id]) {
 				if (!seen.contains(i)) {
 					if (i == dst) { 
-						paths++; 
+						paths++;
 					} else {
 						Node tmp = new Node(i, current.data + 1);
 						seen.add(i);
@@ -186,6 +198,9 @@ public class MyProject implements Project {
 		short[] srcAddrs = addrs[src];
 		// used to store the return values for each query
 		int[] shortestPaths = new int[queries.length];
+		for (int i=1 ; i<shortestPaths.length ; i++) {
+			shortestPaths[i] = Integer.MAX_VALUE;
+		}
 
 		// create a queue of vertices to be scanned as per BFS LinkedList.
 		unsettled = new LinkedList<Node>();
@@ -196,13 +211,29 @@ public class MyProject implements Project {
 		unsettled.add(start);
 		seen.add(src);
 		// stores the queries to be tested, modified by inSubnet()
-		HashSet<String> qlist = new HashSet<String>();
+		HashMap<String, Query> qmap = new HashMap<String, Query>();
+
 		// add each query as a string
-		for (short[] q : queries) {
-			qlist.add(Arrays.toString(q));
+		for (int i=0 ; i<queries.length ; i++) {
+			if (queries[i] == null) {
+				shortestPaths[i] = 0;
+				i++;
+			}
+			String key = Arrays.toString(queries[i]);
+			/*if (qmap.containsKey(key)) {
+				
+			}*/
+			Query q;
+			if (qmap.containsKey(key)) {
+				q = qmap.get(key);
+				q.data.add(i);
+			} else {
+				q = new Query(i);
+			}
+			qmap.put(key, q);
 		}
 		
-		while (!unsettled.isEmpty()) {
+		while ((!unsettled.isEmpty()) && (0<qmap.size()))  {
 			Node current = unsettled.remove();
 
 			for (int y=0 ; y<adjlist[current.id].length ; y++) {
@@ -212,15 +243,16 @@ public class MyProject implements Project {
 					Node tmp = new Node(id, current.data + 1);
 					seen.add(id);
 					unsettled.add(tmp);
-					
-					
-					for (int i=1 ; i<4 ; i++) {
-						short[] subquery = Arrays.copyOfRange(addrs[id], 0, i);
-						String test = Arrays.toString(subquery);
-						System.out.println("TESTING-" + test);
-						if (qlist.contains(test)) {
-							shortestPaths[id] = tmp.data;
+				}
+				for (int i=1 ; i<4 ; i++) {
+					short[] subquery = Arrays.copyOfRange(addrs[current.id], 0, i);
+					String test = Arrays.toString(subquery);
+					if (qmap.containsKey(test)) {
+						List<Integer> dupes = qmap.get(test).data;
+						for (int d : dupes) {
+							shortestPaths[d] = current.data;
 						}
+						qmap.remove(test);
 					}
 				}
 			}

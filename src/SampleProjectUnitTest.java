@@ -82,7 +82,7 @@ public class SampleProjectUnitTest {
             { },
             { },
         };
-
+        
         testBoolean(pref + "trivial disconnected",
             proj.allDevicesConnected(adjlist), false);
 
