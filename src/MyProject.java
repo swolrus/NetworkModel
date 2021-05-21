@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +31,7 @@ public class MyProject implements Project {
     private class Node {
 		private int id;
 		private int data;
+		private List<Node> shortestPath = new LinkedList<>();
 		
 		public Node(int id, int data) {
 			this.id = id;
@@ -60,6 +63,12 @@ public class MyProject implements Project {
      */
 	
     public boolean allDevicesConnected(int[][] adjlist) {
+    	Set<int[]> sub = new HashSet<>();
+    	int[] test = { 8, 8, 8 };
+    	int[] add = {8,8};
+    	sub.add(add);
+    	System.out.println(sub.contains(test));
+
     	// check to see if there are entries if not return false.
     	if(adjlist.length == 0) {return false;}
         // create new boolean array .
@@ -147,11 +156,6 @@ public class MyProject implements Project {
         	}
     		
         }
-        for (int n : seen) {
-        	System.out.print(n + ":");
-        
-        }
-        System.out.println();
         return paths;
     }
 
@@ -180,56 +184,34 @@ public class MyProject implements Project {
      */
     
     public int[] closestInSubnet(int[][] adjlist, short[][] addrs, int src, short[][] queries) {
-        int size = adjlist.length;
-    	// stores distnces travelled to get to each vertex.
-        int[] dist = new int[adjlist.length];
-        Arrays.fill(dist, -1);
         // store the address of the source device for reference later in algorithm. 
         short[] srcAddrs = addrs[src];
         // used to store the return values for each querie.
         int[] shortestPaths = new int[queries.length];
-        // bfs over entire adjlist from source to get distances travelled to each node. 
-        bfsCIS(src, size, dist, adjlist);
-        // for each query find the vertex that has the shortest path in the subnet that is specified 
-        // in the query. 
+        
+        // create a queue of vertices to be scanned as per BFS LinkedList.
+    	unsettled = new LinkedList<Node>();
+    	// stores information on whether the vertex has been visited or not.
+    	Set<short[]> qlist = new HashSet<short[]>();
+    	for (short[] q : queries) {
+    		qlist.add(q);
+    	}
+    	
         for(int i = 0; i < queries.length; i++) {
-        	short[] subnetDest = queries[i];
-        	if(subnetDest.length == 4) {
-        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1] && subnetDest[2] == srcAddrs[2] && subnetDest[3] == srcAddrs[3]) {
-        			shortestPaths[i] = 0;
-        			}
-        		else;{
-        			
-        		}
-        	}
-        	else if(subnetDest.length == 3) {
-        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1] && subnetDest[2] == srcAddrs[2]) {
-        			shortestPaths[i] = 0;
-        			}
-        		else;{
-        			
-        		}
-        	}
-        	else if(subnetDest.length == 2) {
-        		if(subnetDest[0] == srcAddrs[0] && subnetDest[1] == srcAddrs[1]) {
-        			shortestPaths[i] = 0;
-        			}
-        		else;{
-        			
-        		}
-        	}
-        	else if(subnetDest.length == 1) {
-        		if(subnetDest[0] == srcAddrs[0]) {
-        			shortestPaths[i] = 0;
-        			}
-        		else;{
-        			
-        		}
-        	}
         	
         }
-        
         return shortestPaths;
+    }
+    
+    public short[] inSubnet(short[] address, Set<short[]> qlist) {
+    	for (int i=1 ; i<4 ; i++) {
+    		short[] test = Arrays.copyOfRange(address, 0, i);
+    		if (qlist.contains(test)) {
+    			qlist.remove(test);
+    			
+    		}
+    		
+    	}
     }
     
     /**
