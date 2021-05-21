@@ -90,8 +90,11 @@ public class MyProject implements Project {
     private void dfsADC(int v, Boolean[] seen, int[][] list) {
         // mark the current node as visited
         seen[v] = true;
+        // for every path from that node do the following 
         for(int y = 0; y < list[v].length; y++){   
+        	// get the vertex that is connected 
             int n = list[v][y];
+            // if it hasnt been seen already recursively call dfs
             if (!seen[n]){
                 dfsADC(n, seen, list);}
         }
