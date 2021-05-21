@@ -1,7 +1,6 @@
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Set;
@@ -11,44 +10,23 @@ import java.util.List;
 // Full Name (StudentNum)
 
 public class MyProject implements Project {
-
-	// how the graph is stored.
-	// each item in the list is another list.
-	// each stored list stores the destination of the edges that leave the vertex
-	// represented by the address in adjacencyList
-	public ArrayList<ArrayList<Integer>> adjacencyL;
-	// a transpose of the adjacency list
-	public ArrayList<ArrayList<Integer>> transposeAJ;
-	// array list to store the URL of each vertex
-	public ArrayList<ArrayList<Short>> address;
-	// an index that stores the latest vertex added to the list
-	public Integer vert;
-	// a hash set to store if a vertex has been seen by the traversal
+	// a hash set to store if a vertex id has been seen by the traversal
 	Set<Integer> seen;
-
+	
+	// queue of unsettled nodes for depth algorithms vertex ordering
 	Queue<Node> unsettled;
 
+	// a private sub class to be created for each node and hold it's data
 	private class Node {
 		private int id;
 		private int data;
-		private List<Query> queries;
 
 		public Node(int id, int data) {
-			queries = new LinkedList<Query>();
 			this.id = id;
 			this.data = data;
 		}
 	}
 	
-	private class Query {
-		private List<Integer> data;
-		
-		private Query(int id) {
-			data = new LinkedList<Integer>();
-			data.add(id);
-		}
-		
-	}
 	/**
 	 * Zero argument constructor used to create an instance of MyProject for marking. 
 	 */
@@ -73,12 +51,6 @@ public class MyProject implements Project {
 	 */
 
 	public boolean allDevicesConnected(int[][] adjlist) {
-		Set<int[]> sub = new HashSet<>();
-		int[] test = { 8, 8, 8 };
-		int[] add = {8,8};
-		sub.add(add);
-		System.out.println(sub.contains(test));
-
 		// check to see if there are entries if not return false.
 		if(adjlist.length == 0) {return false;}
 		// create new boolean array .
@@ -117,6 +89,7 @@ public class MyProject implements Project {
 	}
 
 	/**
+	 * 
 	 * Determine the number of different paths a packet can take in the network to get from a transmitting device to a receiving device.
 	 * A device will only transmit a packet to a device that is closer to the destination, where the distance to the destination is the minimum number of hops between a device and the destination.
 	 *
@@ -131,26 +104,24 @@ public class MyProject implements Project {
 	 * @param src The source (transmitting) device
 	 * @param dst The destination (receiving) device
 	 * @return The total number of possible paths between the two devices
+	 * 
 	 */
 
 	public int numPaths(int[][] adjlist, int src, int dst) {
 
 		if (src == dst) { return 1; }
 
-		int paths = 0;
-
 		unsettled = new LinkedList<Node>();
-
-		// stores information on whether the vertex has been visited or not.
 		seen = new HashSet<>();
 
 		Node start = new Node(src, 0);
 		seen.add(src);
+		
+		int paths = 0;
 
 		unsettled.add(start);
 
 		while (!unsettled.isEmpty()) {
-
 			Node current = unsettled.remove();
 
 			for (int i : adjlist[current.id]) {
@@ -209,17 +180,18 @@ public class MyProject implements Project {
 		unsettled.add(start);
 		seen.add(src);
 		// stores the queries to be tested, modified by inSubnet()
-		HashMap<String, Query> qmap = new HashMap<String, Query>();
+		HashMap<String, List<Integer>> qmap = new HashMap<String, List<Integer>>();
 
 		// add each query as a string
 		for (int i=0 ; i<queries.length ; i++) {
 			String key = Arrays.toString(queries[i]);
-			Query q;
+			List<Integer> q;
 			if (qmap.containsKey(key)) {
 				q = qmap.get(key);
-				q.data.add(i);
+				q.add(i);
 			} else {
-				q = new Query(i);
+				q = new LinkedList<Integer>();
+				q.add(i);
 			}
 			qmap.put(key, q);
 		}
@@ -259,15 +231,16 @@ public class MyProject implements Project {
 	 * @return int the number of matched queries, or -1 if no matches
 	 * 
 	 */
-	public void testSubnet(short[][] addrs, HashMap<String, Query> qmap, Node current, int[] shortestPaths) {
+	public void testSubnet(short[][] addrs, HashMap<String, List<Integer>> qmap, Node current, int[] shortestPaths) {
 		for (int i=1 ; i<5 ; i++) {
 			
 			short[] subquery = Arrays.copyOfRange(addrs[current.id], 0, i);
+		
 			
 			String test = Arrays.toString(subquery);
 			if (qmap.containsKey(test)) {
 				
-				List<Integer> dupes = qmap.get(test).data;
+				List<Integer> dupes = qmap.get(test);
 				for (int d : dupes) {
 					shortestPaths[d] = current.data;
 				}
@@ -315,11 +288,11 @@ public class MyProject implements Project {
 		case 0:
 			return 0;
 
-			// one possible connection
+		// one possible connection
 		case 1:
 			return (int) pathweights.remove(0);
 
-			// multiple possible connections
+		// multiple possible connections
 		default:
 			double calc = 0;
 			for (int weight : pathweights) { 
